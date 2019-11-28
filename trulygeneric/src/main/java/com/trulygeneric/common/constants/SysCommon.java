@@ -10,4 +10,5 @@ public class SysCommon {
 	public static final String CMA_SPRTR_PT = "\\s*,\\s*";
 	public static final String FLW = "FLOW";
 	public static final String USR = "_";
+	public static final String DOT = ".";
 }

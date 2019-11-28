@@ -1,7 +1,9 @@
 package com.trulygeneric.batch.accumulator.factory.impl;
 
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.flow.support.SimpleFlow;
@@ -19,6 +21,7 @@ import com.trulygeneric.batch.datamodel.repository.JobSequenceRepository;
 import com.trulygeneric.batch.datamodel.repository.StepSequenceRepository;
 import com.trulygeneric.common.constants.SysCommon;
 import com.trulygeneric.common.util.NumberUtil;
+import com.trulygeneric.common.util.ParseUtil;
 
 @Component
 public class FlowFactory implements IFlowFactory {
@@ -28,7 +31,6 @@ public class FlowFactory implements IFlowFactory {
 	@Autowired private JobSequenceRepository jobSeqRepo;
 	@Autowired private StepSequenceRepository stepSeqRepo;
 	
-	
 	@Override
 	public SimpleFlow create(String jobName) throws Exception {
 		GenericJob job = jobRepo.findByJobNameAndActive(jobName, SysCommon.Y);
@@ -37,8 +39,9 @@ public class FlowFactory implements IFlowFactory {
 		boolean started = false;
 		for( int i=0; i<sequences.size();) {
 			int count = 1;
-			if( i < sequences.size() - 1 )
-				while( NumberUtil.equals( sequences.get(i).getSequence(), sequences.get(i+count).getSequence()) ) count++;
+			while( ( i + count ) < sequences.size() 
+					&& NumberUtil.equals( sequences.get(i).getSequence(), sequences.get(i+count).getSequence()) ) 
+				count++;
 			if( count > 1 )
 				addToFlow( started, flowBuilder, createSplit(sequences, i, count));
 			else 
@@ -50,10 +53,21 @@ public class FlowFactory implements IFlowFactory {
 		return flowBuilder.build();
 	}
 	
-	
 	@Override
 	public SimpleFlow createProcessFlow(JobSequence seq) throws Exception {
+		Map<String,String> params = ParseUtil.parseParamStr(seq.getStepParams());
+		final String processName = StringUtils.substringBefore(params.get("name"), SysCommon.DOT).toUpperCase() ;
 		List<StepSequence> sequences = this.stepSeqRepo.findByjobSequenceIdAndActiveOrderBySequenceAsc(seq.getId(), SysCommon.Y);
+		FlowBuilder<SimpleFlow> flowBuilder = new FlowBuilder<>( processName+ SysCommon.USR + SysCommon.FLW );
+		boolean started = false;
+		for( int i =0; i<sequences.size(); i++ ) {
+			int count = 1;
+			while( ( i + count ) < sequences.size() && 
+					NumberUtil.equals( Math.round(sequences.get(i).getSequence()), Math.round(sequences.get(i+count).getSequence())) ) { 
+				count++;
+			}
+			
+		}
 		return null;
 	}
 	
