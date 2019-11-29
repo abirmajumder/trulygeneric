@@ -59,12 +59,19 @@ public class FlowFactory implements IFlowFactory {
 		final String processName = StringUtils.substringBefore(params.get("name"), SysCommon.DOT).toUpperCase() ;
 		List<StepSequence> sequences = this.stepSeqRepo.findByjobSequenceIdAndActiveOrderBySequenceAsc(seq.getId(), SysCommon.Y);
 		FlowBuilder<SimpleFlow> flowBuilder = new FlowBuilder<>( processName+ SysCommon.USR + SysCommon.FLW );
-		boolean started = false;
+		boolean started = false,processStarted = false;
 		for( int i =0; i<sequences.size(); i++ ) {
+			String readerPart = null;
 			int count = 1;
 			while( ( i + count ) < sequences.size() && 
 					NumberUtil.equals( Math.round(sequences.get(i).getSequence()), Math.round(sequences.get(i+count).getSequence())) ) { 
 				count++;
+				if( null ! )
+			}
+			if( count > 1 ) {
+				
+			} else {
+				
 			}
 			
 		}
