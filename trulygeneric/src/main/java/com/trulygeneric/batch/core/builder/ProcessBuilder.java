@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.trulygeneric.batch.constants.JobAction;
+import com.trulygeneric.batch.core.factory.behaviour.IProcessorFactory;
 import com.trulygeneric.batch.datamodel.entity.StepSequence;
 import com.trulygeneric.batch.policy.NamingPolicy;
 import com.trulygeneric.common.exception.ApplicationException;
@@ -26,8 +27,9 @@ public class ProcessBuilder {
 	
 	@Autowired private BatchConfig batchConfig;
 	@Autowired private StepBuilderFactory stepBuilderFactory;
+	@Autowired private IProcessorFactory processorFactory;
 	
-	private Map<String,FaultTolerantStepBuilder<RecordMap<String>,RecordMap<Object>>> objectMap;
+	private Map<String,FaultTolerantStepBuilder<RecordMap<Object>,RecordMap<Object>>> objectMap;
 	
 	public ProcessBuilder() {
 		this.objectMap = new HashMap<>(); 
@@ -40,12 +42,12 @@ public class ProcessBuilder {
 			chunkSize = Integer.parseInt(params.get("chunkSize"));
 		}
 		this.objectMap.put(processName, stepBuilderFactory.get(processName)
-								.<RecordMap<String>,RecordMap<Object>>chunk(chunkSize)
+								.<RecordMap<Object>,RecordMap<Object>>chunk(chunkSize)
 								.faultTolerant());
 		return this;
 	}
 	
-	public ProcessBuilder reader( String processName, ItemReader<RecordMap<String>> reader ) {
+	public ProcessBuilder reader( String processName, ItemReader<RecordMap<Object>> reader ) {
 		this.objectMap.get(processName).reader(reader);
 		return this;
 	}
@@ -61,12 +63,12 @@ public class ProcessBuilder {
 					.build();
 	}
 
-	public ProcessBuilder processAction(String processName, String processPart, List<StepSequence> sequences, int index, int spread) throws ApplicationException {
+	public ProcessBuilder processAction(String processName, String processPart, List<StepSequence> sequences, int index, int spread) throws Exception {
 		JobAction actn = JobAction.get(processName);
 		switch( actn ) {
-			case TRANSFORMATION:break;
+			case TRANSFORMATION: objectMap.get(processName).processor(this.processorFactory.create(sequences)); break;
 			case WRITER:break;
-				default: throw new ApplicationException();
+			case NONE: throw new ApplicationException();
 		}
 		return this;
 	}
