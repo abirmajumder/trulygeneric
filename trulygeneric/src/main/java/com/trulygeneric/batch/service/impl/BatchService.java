@@ -4,13 +4,12 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.trulygeneric.batch.accumulator.factory.behaviour.IFlowFactory;
+import com.trulygeneric.batch.core.factory.behaviour.IFlowFactory;
 import com.trulygeneric.batch.service.behaviour.IBatchService;
 import com.trulygeneric.common.constants.SysCommon;
 

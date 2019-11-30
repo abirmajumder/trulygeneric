@@ -17,4 +17,10 @@ public enum JobAction {
 		return this == PROCESS;
 	}
 	
+	public static boolean isProcessPart( String testPart ) {
+		return
+				Stream.of( TRANSFORMATION, WRITER )
+					  .anyMatch( jac -> jac.name().equalsIgnoreCase(testPart) );
+	}
+	
 }
