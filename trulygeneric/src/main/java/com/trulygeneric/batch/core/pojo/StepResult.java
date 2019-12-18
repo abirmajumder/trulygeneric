@@ -108,6 +108,9 @@ public class StepResult {
 	public void setExitStatus(String exitStatus) {
 		this.exitStatus = exitStatus;
 	}
+	
+	
+	
 	@Override
 	public String toString() {
 		return "StepResult [stepName=" + stepName + ", status=" + status

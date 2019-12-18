@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.junit.Assert;
+import org.springframework.batch.core.JobExecution;
+
 public class JobResult {
 	
 	private String jobName;
@@ -49,6 +52,11 @@ public class JobResult {
 		return exitStatus;
 	}
 
+	public void doAssert( JobExecution job ) {
+		Assert.assertEquals(status, job.getStatus());
+		Assert.assertEquals(exitStatus, job.getExitStatus());
+	}
+	
 	@Override
 	public String toString() {
 		return "JobResult [stepResults=" + stepResults.stream().map( Object :: toString ).collect(Collectors.joining(" | ")) + "]";
