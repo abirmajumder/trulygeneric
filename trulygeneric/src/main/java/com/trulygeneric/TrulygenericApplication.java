@@ -18,7 +18,8 @@ public class TrulygenericApplication implements CommandLineRunner {
 	
 	@Override
 	public void run(String... args) throws Exception {
-		batchService.start("FINCODE");
+		//batchService.start("FINCODE");
+		batchService.validateJob("FINCODE");
 	}
 
 }
